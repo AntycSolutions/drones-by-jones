@@ -1,0 +1,26 @@
+# Sqlite databases
+db.sqlite3
+
+# Python
+__pycache__
+*.pyc
+.project
+.pydevproject
+
+# Temporary files
+*~
+
+# Apple
+.DS_Store
+
+# Django
+media/*
+static/*
+
+# Coverage
+.coverage
+htmlcov
+
+# settings files
+dbj/configs/devl_settings.py
+dbj/configs/prod_settings.py

@@ -1,0 +1,4 @@
+django==1.8.14
+django-crispy-forms==1.6.0
+git+https://github.com/AntycSolutions/django-accounts
+git+https://github.com/AntycSolutions/utils
