@@ -1,7 +1,9 @@
 import platform
-from urllib import request
+from os import path
+from urllib import request, error as urllib_error
 
 from django import http
+from django.conf import settings
 
 
 def map_file(request, filename=None):
@@ -23,22 +25,27 @@ def map_file(request, filename=None):
     return response
 
 
+# init environment specific vars
 system = platform.system()
 port = ''  # optional
 server_url = 'http://127.0.0.1{}/'.format(port)
+dev_folder = path.dirname(settings.BASE_DIR)
+map_folder = '/BHIWebAll/'
+tmp_folder = '/tmp/'
 if system == 'Windows':
     extension = '.exe'
+    map_folder = 'E:/Dropbox' + map_folder
+    tmp_folder = 'C:/ms4w' + tmp_folder
 elif system == 'Linux':
     extension = ''  # doesn't require extension
+    map_folder = dev_folder + map_folder
+    tmp_folder = dev_folder + tmp_folder
 else:
     raise Exception('Unknown platform.system')
 mapserv_url = '{}cgi-bin/mapserv{}?map='.format(server_url, extension)
 
 
 def get_mapserv(filename, mapserv_args):
-    # TODO: move these into django project?
-    map_folder = 'E:/Dropbox/BHIWebAll/'
-
     file_path = ''.join([map_folder, filename, '.map'])
 
     extra_mapserv_args = get_extra_mapserv_args(filename, map_folder)
@@ -48,16 +55,16 @@ def get_mapserv(filename, mapserv_args):
     )
 
     content = None
-    with request.urlopen(full_mapserv_url) as f:
-        content = f.read()
+    try:
+        with request.urlopen(full_mapserv_url) as f:
+            content = f.read()
+    except urllib_error.HTTPError:
+        print("Could not connect to MapServer")
 
     return content
 
 
 def get_extra_mapserv_args(filename, map_folder):
-    # TODO: add linux location
-    tmp_folder = 'C:/ms4w/tmp/'
-
     extra_mapserv_args = ''.join(
         [
             '&tmp_folder=', tmp_folder,
